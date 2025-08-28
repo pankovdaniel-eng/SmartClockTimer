@@ -170,14 +170,14 @@ done
 }
 APP_ARGS=$(save "$@")
 
-# Collect all arguments for the java command, following the shell quoting and su
-bstitution rules
-eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$A
-PP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain
- "$APP_ARGS"
+# Collect all arguments for the java command, following the shell quoting and substitution rules
 
-# by default we should be in the correct project dir, but when run from Finder o
-n Mac, the cwd is wrong
+eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$A
+PP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain = $APP_ARGS
+
+
+# by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
+
 if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi
