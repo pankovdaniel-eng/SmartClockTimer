@@ -20,8 +20,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 
 
+import com.example.smartclock.weather.WeatherApiResponse;
 import com.example.smartclock.weather.WeatherApiService;
-import com.example.smartclock.weather.WeatherResponse;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -178,20 +178,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchWeatherData(android.location.Location location) {
-        String apiKey = getString(R.string.openweathermap_api_key);
-        weatherApiService.getWeather(location.getLatitude(), location.getLongitude(), apiKey, "metric", "minutely,hourly,daily,alerts")
-                .enqueue(new Callback<WeatherResponse>() {
+        String apiKey = getString(R.string.weather_api_key);
+        String q = location.getLatitude() + "," + location.getLongitude();
+        weatherApiService.getWeather(apiKey, q)
+                .enqueue(new Callback<WeatherApiResponse>() {
                     @Override
-                    public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                    public void onResponse(Call<WeatherApiResponse> call, Response<WeatherApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            WeatherResponse weatherResponse = response.body();
-                            weatherTempText.setText(String.format("%.1f°C", weatherResponse.current.temp));
-                            weatherDescText.setText(weatherResponse.current.weather.get(0).description);
+                            WeatherApiResponse weatherResponse = response.body();
+                            weatherTempText.setText(String.format("%.1f°C", weatherResponse.current.tempC));
+                            weatherDescText.setText(weatherResponse.current.condition.text);
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                    public void onFailure(Call<WeatherApiResponse> call, Throwable t) {
                         Toast.makeText(MainActivity.this, "Failed to fetch weather data", Toast.LENGTH_SHORT).show();
                     }
                 });

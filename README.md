@@ -53,10 +53,10 @@ This will download and set up Gradle. After this initial setup, you can proceed 
 
 ### API Key Setup
 
-This app uses the OpenWeatherMap API to fetch weather data. You will need to get a free API key from [OpenWeatherMap](https://openweathermap.org/api) and add it to the project.
+This app uses the WeatherAPI.com API to fetch weather data. You will need to get a free API key from [WeatherAPI.com](https://www.weatherapi.com/) and add it to the project.
 
 1.  Open the file `app/src/main/res/values/strings.xml`.
-2.  Find the line `<string name="openweathermap_api_key">YOUR_API_KEY</string>`.
+2.  Find the line `<string name="weather_api_key">YOUR_API_KEY</string>`.
 3.  Replace `YOUR_API_KEY` with your actual API key.
 
 ### Building the Project

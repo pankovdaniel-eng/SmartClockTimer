@@ -1,14 +1,14 @@
 package com.example.smartclock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import com.example.smartclock.weather.WeatherApiClient;
-import com.example.smartclock.weather.WeatherResponse;
+import com.example.smartclock.weather.WeatherApiResponse;
 import java.util.Calendar;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,17 +34,18 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private void fetchWeatherAndProcessAlarm(Context context, double latitude, double longitude) {
-        String apiKey = context.getString(R.string.openweathermap_api_key);
-        WeatherApiClient.getClient().getWeather(latitude, longitude, apiKey, "metric", "minutely,hourly,daily,alerts")
-                .enqueue(new Callback<WeatherResponse>() {
+        String apiKey = context.getString(R.string.weather_api_key);
+        String q = latitude + "," + longitude;
+        WeatherApiClient.getClient().getWeather(apiKey, q)
+                .enqueue(new Callback<WeatherApiResponse>() {
                     @Override
-                    public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                    public void onResponse(Call<WeatherApiResponse> call, Response<WeatherApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            WeatherResponse weatherResponse = response.body();
-                            String weatherMain = weatherResponse.current.weather.get(0).main;
-                            double temp = weatherResponse.current.temp;
+                            WeatherApiResponse weatherResponse = response.body();
+                            String weatherText = weatherResponse.current.condition.text.toLowerCase();
+                            double temp = weatherResponse.current.tempC;
 
-                            if (weatherMain.equalsIgnoreCase("Rain") || weatherMain.equalsIgnoreCase("Snow") || temp < -15) {
+                            if (weatherText.contains("rain") || weatherText.contains("snow") || temp < -15) {
                                 postponeAlarm(context);
                             } else {
                                 showAlarmNotification(context, "Wake up!", "Time to start your day!");
@@ -55,7 +56,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     }
 
                     @Override
-                    public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                    public void onFailure(Call<WeatherApiResponse> call, Throwable t) {
                         showAlarmNotification(context, "Wake up!", "Time to start your day!");
                     }
                 });
